@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+  db:
+    ports:
+      - "5432:5432"
+    container_name: postgres_container
+    image: postgres:latest
+    env:
+        'POSTGRES_DB=testing_java'
+        'POSTGRES_PASSWORD=123456'
+        'POSTGRES_USER=postgres'
+    volumes:
+      - "/var/run/postgres/postgres.sock:/var/run/postgres/postgres.sock"
+      - "dbdata:/var/lib/postgresql/data"
+    restart: always
+  backend:
+    build: ./docker
+    container_name: postgres_test_container
+    ports:
+      - 8080:8080
+  env:
+    db-url: jdbc:postgresql://db:5432/testing_java
+    db-username: postgres
+    db-password: 123456
+    depends_on:
+      - db
+    restart: always
